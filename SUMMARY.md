@@ -8,6 +8,9 @@
 * [PowerShell Basics](misc/powershell-basics.md)
 * [Bypass defenses](misc/bypass-defenses.md)
 * [Transfer files](misc/transfer-files.md)
+* [Theory](misc/theory/README.md)
+  * [Tools/Command Workings](misc/theory/tools-command-workings/README.md)
+    * [PowerView](misc/theory/tools-command-workings/powerview.md)
 
 ## 🔨 Basic enumeration
 
@@ -17,7 +20,7 @@
 
 ## ⛏️ AD Enumeration
 
-* [Gnereral](ad-enumeration/gnereral.md)
+* [General](ad-enumeration/gnereral.md)
 * [ACL](ad-enumeration/acl.md)
 * [Forests and Trusts](ad-enumeration/forests-and-trusts.md)
 
@@ -60,6 +63,6 @@
 
 ## 📚 Resources
 
-* [AD attacking overall](https://zer1t0.gitlab.io/posts/attacking\_ad/)
+* [AD attacking overall](https://zer1t0.gitlab.io/posts/attacking_ad/)
 * [Rubeus Guide](https://www.hackingarticles.in/a-detailed-guide-on-rubeus/)
 * [The Hacker Recipes](https://www.thehacker.recipes/)

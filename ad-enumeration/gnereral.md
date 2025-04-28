@@ -1,4 +1,4 @@
-# Gnereral
+# General
 
 ### Tools
 
@@ -8,7 +8,7 @@
 . C:\AD\Tools\PowerView.ps1
 ```
 
-[AD module](https://github.com/samratashok/ADModule) - MS singed&#x20;
+[AD module](https://github.com/samratashok/ADModule) - MS singed
 
 ```powershell
 Import-Module C:\AD\Tools\ADModule-master\Microsoft.ActiveDirectory.Management.dll
@@ -19,8 +19,8 @@ Import-Module C:\AD\Tools\ADModule-master\ActiveDirectory\ActiveDirectory.psd1
 
 BloodHound Versions:
 
-* [BloodHound Legacy](https://github.com/BloodHoundAD/BloodHound)&#x20;
-* [BloodHound ](https://github.com/SpecterOps/BloodHound)
+* [BloodHound Legacy](https://github.com/BloodHoundAD/BloodHound)
+* [BloodHound](https://github.com/SpecterOps/BloodHound)
 
 ```bash
 # start db server
@@ -108,7 +108,7 @@ Get domain SID for the current domain
 
 {% tabs %}
 {% tab title="PowerView" %}
-Get domain controllers for the current domain
+Get domain controllers for the current domain
 
 ```powershell
 Get-DomainController
@@ -223,14 +223,12 @@ Get a list of computers in the current domain
 Get-ADComputer -Filter * | select Name
 Get-ADComputer -Filter * -Properties *
 Get-ADComputer -Filter 'OperatingSystem -like "*Server 2022*"' -Properties OperatingSystem | select Name,OperatingSystem
-Get-ADComputer -Filter * -Properties DNSHostName | %{TestConnection -Count 1 -ComputerName $_.DNSHostName}
+Get-ADComputer -Filter * -Properties DNSHostName | %{TestConnection -Count 1 -ComputerName $_.DNSHostName}
 ```
 {% endtab %}
 {% endtabs %}
 
 ### Domain Groups
-
-
 
 {% tabs %}
 {% tab title="PowerView" %}
@@ -288,6 +286,24 @@ Get-ADPrincipalGroupMembership -Identity student1
 {% endtab %}
 {% endtabs %}
 
+### Local Groups
+
+{% tabs %}
+{% tab title="PowerView" %}
+List all the local groups on a machine (requires admin privileges)
+
+```powershell
+Get-NetLocalGroup -ComputerName dcorp-dc
+```
+
+Get members of the local group "Administrators" on a machine (requires admin privileges)
+
+```powershell
+Get-NetLocalGroupMember -ComputerName dcorp-dc -GroupName Administrators
+```
+{% endtab %}
+{% endtabs %}
+
 ### Group Policy
 
 {% tabs %}
@@ -296,10 +312,10 @@ Get list of GPO in current domain
 
 ```powershell
 Get-DomainGPO
-Get-DomainGPO -ComputerIdentity dcorp-student1
+Get-DomainGPO -ComputerIdentity <computer-name>   # Get-DomainGPO -ComputerIdentity dcorp-student1
 ```
 
-Get GPO(s) which use Restricted Groups
+Get GPO(s) which use Restricted Groups or groups.xml for interesting users
 
 ```powershell
 Get-DomainGPOLocalGroup
@@ -321,8 +337,6 @@ Get-DomainGPOUserLocalGroupMapping -Identity student1 -Verbose
 
 ### Organization Units
 
-
-
 {% tabs %}
 {% tab title="PowerView" %}
 Get OUs in a domain
@@ -333,7 +347,8 @@ Get OUs in a domain
 Get-DomainOU
 
 # Get all computers inside an OU
-(Get-DomainOU -Identity StudentMachines).distinguishedname | %{Get-DomainComputer -SearchBase $_} | select name
+(Get-DomainOU -Identity <OU-Name>).distinguishedname | %{Get-DomainComputer -SearchBase $_} | select name
+Ex: (Get-DomainOU -Identity StudentMachines).distinguishedname | %{Get-DomainComputer -SearchBase $_} | select name
 ```
 {% endcode %}
 
@@ -342,10 +357,13 @@ Using `Get-NetOU`
 {% code overflow="wrap" %}
 ```powershell
 # Get all computers inside an OU
+(Get-NetOU -Identity <OU-Name>).distinguishedname | %{Get-DomainComputer -SearchBase $_} | select name
+Ex: 
 (Get-NetOU -Identity StudentMachines).distinguishedname | %{Get-DomainComputer -SearchBase $_} | select name
 
 # Get GPO applied on an OU 
-Get-NetOU -Identity "StudentMachines" | select gplink # Get GPO ID
+Get-NetOU -Identity "<OU-Name>" | select gplink # Get GPO ID
+Ex: Get-NetOU -Identity "StudentMachines" | select gplink # Get GPO ID
 Get-DomainGPO -Identity "{0D1CC23D-1F20-4EEE-AF64-D99597AE2A6E}" # Get GPO Info
 ```
 {% endcode %}
@@ -360,31 +378,7 @@ Get-ADOrganizationalUnit -Filter * -Properties *
 {% endtab %}
 {% endtabs %}
 
-### Local Groups
-
-
-
-{% tabs %}
-{% tab title="PowerView" %}
-List all the local groups on a machine (requires admin privileges)
-
-```powershell
-Get-NetLocalGroup -ComputerName dcorp-dc
-```
-
-Get members of the local group "Administrators" on a machine  (requires admin privileges)
-
-```powershell
-Get-NetLocalGroupMember -ComputerName dcorp-dc -GroupName Administrators
-```
-{% endtab %}
-{% endtabs %}
-
-
-
 ### Shares
-
-
 
 {% tabs %}
 {% tab title="PowerView" %}
@@ -411,8 +405,6 @@ Get-NetFileServer
 
 ### User Hunting
 
-
-
 {% tabs %}
 {% tab title="PowerView" %}
 Find Local group members of RDP or WinRM of specific machine
@@ -422,7 +414,7 @@ Get-NetLocalGroupMember -ComputerName COMPUTER_NAME -GroupName "Remote Desktop U
 Get-NetLocalGroupMember -ComputerName COMPUTER_NAME -GroupName "Remote Management Users"
 ```
 
-Find all machines on the current domain where the current user has local admin access
+Find all machines on the current domain where the current user has local admin access - [#find-localadminaccess](../misc/theory/tools-command-workings/powerview.md#find-localadminaccess "mention")
 
 ```powershell
 # Very noisy
@@ -441,17 +433,16 @@ Find-WMILocalAdminAccess
 # execute
 Find-PSRemotingLocalAdminAccess.ps1
 
-
 ```
 
-Find machines  where a domain admin has sessions
+Find machines where a domain admin has sessions - [#find-domainuserlocation](../misc/theory/tools-command-workings/powerview.md#find-domainuserlocation "mention")
 
 ```powershell
 # Very noisy
 Find-DomainUserLocation -Verbose
 Find-DomainUserLocation -UserGroupIdentity "RDPUsers"
 Find-DomainUserLocation -CheckAccess 
-Find-DomainUserLocation -Stealth # less noisy, targeting file servers
+Find-DomainUserLocation -Stealth # less noisy, targeting file servers
 
 ```
 
@@ -467,4 +458,3 @@ Invoke-SessionHunter -NoPortScan -Targets C:\AD\Tools\servers.txt
 ```
 {% endtab %}
 {% endtabs %}
-
