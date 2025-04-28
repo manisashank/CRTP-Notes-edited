@@ -11,30 +11,3 @@ Ready to conquer CRTP! 🚀
 
 > **Disclaimer:** These notes are based on my understanding and are not meant to be your standalone resource.\
 > For more detailed notes check [The Hacker Recipes](https://www.thehacker.recipes/) or [ired.team](https://www.ired.team/).
-
-***
-
-## Project links
-
-### GitHub&#x20;
-
-[https://github.com/dudisamarel/crtp-notes](https://github.com/dudisamarel/crtp-notes)
-
-### Gitbook&#x20;
-
-[https://dudisamarel.gitbook.io/crtp-notes/](https://dudisamarel.gitbook.io/crtp-notes/)
-
-***
-
-## Contact
-
-### LinkedIn &#x20;
-
-[https://www.linkedin.com/in/dudi-samarel-1a595a1a9/](https://www.linkedin.com/in/dudi-samarel-1a595a1a9/)
-
-### Email&#x20;
-
-#### dudisamarel@gmail.com
-
-
-
