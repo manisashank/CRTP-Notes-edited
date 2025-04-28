@@ -13,6 +13,8 @@
     * [PowerView](misc/theory/tools-command-workings/powerview.md)
   * [Something New](misc/theory/something-new.md)
   * [To Remember](misc/theory/to-remember.md)
+  * [Concepts](misc/theory/concepts.md)
+  * [FAQ](misc/theory/faq.md)
 
 ## 🔨 Basic enumeration
 
@@ -42,8 +44,8 @@
 
 * [WinRM](lateral-movement/winrm.md)
 * [Credentials Dumping](lateral-movement/lsass-dump.md)
-* [DC Sync](lateral-movement/dc-sync.md)
 * [Over Pass The Hash](lateral-movement/over-pass-the-hash.md)
+* [DC Sync](lateral-movement/dc-sync.md)
 * [Runas](lateral-movement/runas.md)
 
 ## 🔧 Persistence
@@ -56,8 +58,8 @@
 * [DSRM](persistence/dsrm.md)
 * [Custom SSP](persistence/custom-ssp.md)
 * [AdminSDHolder](persistence/adminsdholder.md)
-* [Security Descriptors](persistence/security-descriptors.md)
 * [ACL](persistence/acl.md)
+* [Security Descriptors](persistence/security-descriptors.md)
 
 ***
 

