@@ -5,9 +5,8 @@ Each **ACE** specifies the access rights of a user or group.
 
 The **security descriptor** for an object can contain two types of ACLs:
 
-* **DACL** - Defines the permission of  a user or group have on object
-* **SACL** - Logs success and failure messages when an object is accessed.\
-
+* **DACL** - Defines the permission of a user or group have on object
+* **SACL** - Logs success and failure messages when an object is accessed.\\
 
 Active Directory object permissions:
 
@@ -19,17 +18,38 @@ Active Directory object permissions:
 * **ForceChangePassword** - ability to change user's password
 * **Self (Self-Membership)** - ability to add yourself to a group
 
+<details>
+
+<summary>How to read the ACE's</summary>
+
+Get the ACLs associated with the specified object
+
+```
+Get-DomainObjectAcl -SamAccountName <sam-account-name> -ResolveGUID
+```
+
+<figure><img src="https://remnote-user-data.s3.amazonaws.com/If7eVKAB1hipvZvH3Xltaq_52YmtY0xo1W4hUEsk31Wx77ibSqUBiusZYPTbkiGq89p3wDi6MeYqIFBNFfoBUZ-wdCOetQFGuAY8fwW5odE-OA5HdoQ5bsZGH1xsSo9T.png" alt=""><figcaption></figcaption></figure>
+
+* On "ObjectDN" the "SecurityIdentifier" has "ActiveDirectoryRights" i.e,
+* So on "Shashank M" securityIdentifier i.e, group "S-1-532-544" has "CreateChild, etc" ActiveDirectoryRights
+
+</details>
+
 
 
 {% tabs %}
 {% tab title="PowerView" %}
 Get the ACLs associated with the specified object
 
-<pre class="language-powershell" data-overflow="wrap"><code class="lang-powershell">Get-DomainObjectAcl -SamAccountName student1 -ResolveGUIDs
+{% code overflow="wrap" %}
+```powershell
+Get-DomainObjectAcl -SamAccountName <sam-account-name> -ResolveGUIDs
+Ex: Get-DomainObjectAcl -SamAccountName student1 -ResolveGUIDs
 
  Get-DomainObjectAcl -ResolveGUIDs -Identity "target" | ? {$_.SecurityIdentifier -eq (Convert-NameToSid foothold)}
-<strong>
-</strong></code></pre>
+
+```
+{% endcode %}
 
 Get the ACLs associated with the specified group
 
@@ -44,7 +64,7 @@ Get-DomainObjectAcl -SearchBase "DC=dollarcorp,DC=moneycorp,DC=local" -SearchSco
 ```
 {% endcode %}
 
-Search for interesting ACEs
+Search for interesting ACEs (write and modify permissions are enabled) where `IdentityReferenceName` matches the given name
 
 {% code overflow="wrap" %}
 ```powershell
@@ -69,4 +89,3 @@ Get the ACLs associated with the specified prefix to be used for search
 {% endcode %}
 {% endtab %}
 {% endtabs %}
-

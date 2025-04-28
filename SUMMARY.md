@@ -11,6 +11,8 @@
 * [Theory](misc/theory/README.md)
   * [Tools/Command Workings](misc/theory/tools-command-workings/README.md)
     * [PowerView](misc/theory/tools-command-workings/powerview.md)
+  * [Something New](misc/theory/something-new.md)
+  * [To Remember](misc/theory/to-remember.md)
 
 ## 🔨 Basic enumeration
 

@@ -2,7 +2,7 @@
 
 ## AMSI Bypass
 
-### PowerShell AMSI Bypass &#x20;
+### PowerShell AMSI Bypass
 
 {% tabs %}
 {% tab title="Obfuscated" %}
@@ -55,7 +55,7 @@ $KTMJX = [Byte[]] ($TLML,$PURX,$YNWL,$RTGX,+$XVON,+$WRUD)
 
 {% embed url="https://github.com/OmerYa/Invisi-Shell" %}
 
-Invisi-Shell bypasses all of PowerShell security features (ScriptBlock logging, Module logging, Transcription, AMSI) by hooking&#x20;
+Invisi-Shell bypasses all of PowerShell security features (ScriptBlock logging, Module logging, Transcription, AMSI) by hooking
 
 Usage
 
@@ -101,7 +101,7 @@ Create an exclusion
 Add-MpPreference -ExclusionPath "C:\Windows\Temp"
 ```
 
-## Firewall&#x20;
+## Firewall
 
 > **Note:** requires Admin privileges.
 
@@ -119,7 +119,7 @@ Disable manually
 
 ### AMSITrigger
 
-&#x20;identify the part of a script is detected
+identify the part of a script is detected
 
 {% embed url="https://github.com/RythmStick/AMSITrigger" %}
 AMSITrigger
@@ -135,11 +135,11 @@ Example for scanning
 
 <figure><img src="../.gitbook/assets/image (2) (1).png" alt=""><figcaption></figcaption></figure>
 
-Example for bypassing&#x20;
+Example for bypassing
 
 <pre class="language-powershell"><code class="lang-powershell"><strong># Reverse the "Net.Sockets" string
-</strong><strong>
-</strong><strong>$String = "stekcoS.teN"
+</strong>
+<strong>$String = "stekcoS.teN"
 </strong>$class = ([regex]::Matches($String,'.','RightToLeft') | ForEach {$_.value}) -join ''
 if ($Reverse)
 {
@@ -147,7 +147,7 @@ if ($Reverse)
 }
 </code></pre>
 
-### DefenderChecker&#x20;
+### DefenderChecker
 
 Identify code and strings from a binary / file that Windows Defender may flag
 
@@ -161,3 +161,20 @@ usage
 DefenderCheck.exe PowerUp.ps1 
 ```
 
+To bypass AVs we can either:
+
+* Change only the responsible code that is being flagged as malicious by AMSITrigger/DefenderChecker.
+* Obfuscate the whole script - Can use `Invoke-Obfuscation`
+
+### Common measures to bypass AVs
+
+* Remove the comments.
+* Modify each use of "DumpCreds".
+* Modify the variable names of the Win32 API calls that are detected.
+  *
+
+      <figure><img src="https://remnote-user-data.s3.amazonaws.com/Wwmmo3oKy5-CR1Zya71vkYA5TimhjZjZBUgiYb8HCEf-1ZtYxFVCCIWz157UDC37tGhbHNQUVMwwdoDG9rTtQP0n-stkfc3ke7xCKdXeU3mop9y0A8RXlzYGoUjLj-Su.png" alt=""><figcaption></figcaption></figure>
+* Reverse the strings that are detected and the Mimikatz Compressed DLL string.
+  *
+
+      <figure><img src="https://remnote-user-data.s3.amazonaws.com/fNNoNxgPJSYcucdQ_pzWpzzLHOv3zknRZ_M8LOHoWb88FHVx5qiuznAYLVxOla2MvJIQOp4amEin9E2VRjDcrzDaKmkXUIHVbEBtU7UxoFGFbdBjcUlVc2tk8mlGqMnH.png" alt=""><figcaption></figcaption></figure>
