@@ -26,3 +26,53 @@
 * Step 3: The client then presents this TGT to the DC and requests (TGS-REQ) for a TGS (Ticket Granting Service)
 * Step 4: The DC responds with the TGS (TGS-REP)
 * Step 5: The user then presents this TGS to the Service (Application Server in this case) and gets access to it.
+
+## [Kerberos Double Hop Problem](concepts.md#kerberos-double-hop-problem)
+
+* Kerberos Delegation allows to "reuse the end-user credentials to access resources hosted on a different server".
+* This is typically useful in multi-tier service or applications where Kerberos Double Hop is required.
+* For example, users authenticates to a web server and web server makes requests to a database server. The web server can request access to resources (all or some resources depending on the type of delegation) on the database server as the user and not as the web server's service account.
+* Please note that, for the above example, the service account for web service must be trusted for delegation to be able to make requests as a user.
+* Let's say we have three hosts: Attack host --> DEV01 --> DC01. Our Attack Host is a Parrot box within the corporate network but not joined to the domain. We obtain a set of credentials for a domain user and find that they are part of the Remote Management Users group on DEV01. We want to use PowerView to enumerate the domain, which requires communication with the Domain Controller, DC01.
+*
+
+    <figure><img src="https://remnote-user-data.s3.amazonaws.com/cS-lYlD6E7RdS6p1rQxyqGyMDNAbAJoXw5ttcxWy1mVkvyNl_QDdjvLJjnqf4WTpUdFYrPPtvD-dOIzlDQ0g4876LzcyMNMLgoT9N0ZxhQhnJfgBpA5GmRKHmhV2lAJ9.png" alt=""><figcaption></figcaption></figure>
+* When we connect to DEV01 using a tool such as evil-winrm, we connect with network authentication, so our credentials are not stored in memory and, therefore, will not be present on the system to authenticate to other resources on behalf of our user. When we load a tool such as PowerView and attempt to query Active Directory, Kerberos has no way of telling the DC that our user can access resources in the domain. This happens because the user's Kerberos TGT (Ticket Granting Ticket) ticket is not sent to the remote session; therefore, the user has no way to prove their identity, and commands will no longer be run in this user's context. In other words, when authenticating to the target host, the user's ticket-granting service (TGS) ticket is sent to the remote service, which allows command execution, but the user's TGT ticket is not sent. When the user attempts to access subsequent resources in the domain, their TGT will not be present in the request, so the remote service will have no way to prove that the authentication attempt is valid, and we will be denied access to the remote service.
+* If unconstrained delegation is enabled on a server, it is likely we won't face the "Double Hop" problem. In this scenario, when a user sends their TGS ticket to access the target server, their TGT ticket will be sent along with the request. The target server now has the user's TGT ticket in memory and can use it to request a TGS ticket on their behalf on the next host they are attempting to access. In other words, the account's TGT ticket is cached, which has the ability to sign TGS tickets and grant remote access. Generally speaking, if you land on a box with unconstrained delegation, you already won and aren't worrying about this anyways.
+
+### **Work Around:**
+
+* {% code overflow="wrap" %}
+  ```powershell
+  ### Workaround 1
+  *Evil-WinRM* PS C:\Users\backupadm\Documents> $SecPassword = ConvertTo-SecureString '!qazXSW@' -AsPlainText -Force
+  *Evil-WinRM* PS C:\Users\backupadm\Documents>  $Cred = New-Object System.Management.Automation.PSCredential('INLANEFREIGHT\backupadm', $SecPassword)
+  *Evil-WinRM* PS C:\Users\backupadm\Documents> get-domainuser -spn -credential $Cred | select samaccountname
+
+  ### Workaround 2
+  PS C:\htb> Register-PSSessionConfiguration -Name backupadmsess -RunAsCredential inlanefreight\backupadm
+  Restart-Service WinRM
+  PS C:\htb> Enter-PSSession -ComputerName DEV01 -Credential INLANEFREIGHT\backupadm -ConfigurationName  backupadmsess
+  [DEV01]: PS C:\Users\Public> get-domainuser -spn | select samaccountname
+  ```
+  {% endcode %}
+* Note: We cannot use Register-PSSessionConfiguration from an evil-winrm shell because we won't be able to get the credentials popup. Furthermore, if we try to run this by first setting up a PSCredential object and then attempting to run the command by passing credentials like -RunAsCredential $Cred, we will get an error because we can only use RunAs from an elevated PowerShell terminal. Therefore, this method will not work via an evil-winrm session as it requires GUI access and a proper PowerShell console. Furthermore, in our testing, we could not get this method to work from PowerShell on a Parrot or Ubuntu attack host due to certain limitations on how PowerShell on Linux works with Kerberos credentials. This method is still highly effective if we are testing from a Windows attack host and have a set of credentials or compromise a host and can connect via RDP to use it as a "jump host" to mount further attacks against hosts in the environment.
+* Other Solutions:
+  * CredSSP
+  * Port forwarding
+  * Injecting into a process running in the context of a target user (sacrificial process)
+  * Explicit credentials - Mention the credentials of the user explicitly
+  * Delegation - [delegations.md](../../privilege-escalation/domain-privilege-escalation/delegations.md "mention")
+
+## [Kerberos Delegation](concepts.md#kerberos-delegation)
+
+* A user provides credentials to the Domain Controller.
+* The DC returns a TGT.
+* The user requests a TGS for the web service on Web Server. - At the end of this step the DC checks if the web server has unconstrained delegation or not, only if the web server has unconstrained delegation the DC will encapsulate the user's TGT inside the TGS and then return to the user.
+* The DC provides the TGS to the user which is encapsulated with the user's TGT (since the web server has unconstrained delegation access).
+* The user sends this TGS (encapsulated with user's TGT) to the web server. - Here the webserver would get the TGS which is encapsulated with the user's TGT as well.
+* The web server service account use the user's TGT to request a TGS for the database server from the DC.
+* The web server service account connects to the database server as the user.
+*
+
+    <figure><img src="https://remnote-user-data.s3.amazonaws.com/URC1A6BQusW--nd7VcI43IM6Iou2BEsCZbSU8dSeuP312oAwREUJNurBGtGhduYllhhwZM70fli4xYGCE5Jc9sasFpcIFwCo2PrVbkMIIVOh4KQnCxqQr2MqCohPIOKq.png" alt=""><figcaption></figcaption></figure>

