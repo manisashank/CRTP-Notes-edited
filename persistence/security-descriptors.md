@@ -26,9 +26,9 @@ Once we have administrator privileges it is possible to create a backdoor by mod
 
 It is possible to add the non-admin user to the ACE using the `Component Services` and `Computer Management`.
 
-<figure><img src="../.gitbook/assets/image.png" alt=""><figcaption><p>Component Services</p></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (2).png" alt=""><figcaption><p>Component Services</p></figcaption></figure>
 
-<figure><img src="../.gitbook/assets/image (2).png" alt=""><figcaption><p>Computer Management</p></figcaption></figure>
+<figure><img src="../.gitbook/assets/image (2) (2).png" alt=""><figcaption><p>Computer Management</p></figcaption></figure>
 
 Apply to all namespaces
 

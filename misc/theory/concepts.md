@@ -76,3 +76,42 @@
 *
 
     <figure><img src="https://remnote-user-data.s3.amazonaws.com/URC1A6BQusW--nd7VcI43IM6Iou2BEsCZbSU8dSeuP312oAwREUJNurBGtGhduYllhhwZM70fli4xYGCE5Jc9sasFpcIFwCo2PrVbkMIIVOh4KQnCxqQr2MqCohPIOKq.png" alt=""><figcaption></figcaption></figure>
+
+***
+
+## [Trust Flow - Inter-realm TGT](concepts.md#trust-flow-inter-realm-tgt)
+
+<figure><img src="../../.gitbook/assets/image.png" alt=""><figcaption></figcaption></figure>
+
+1. Client on behalf of the user send an encrypted (with user's AES Keys) timestamp to the DC (maybe child DC) - AS-REQ
+2. DC (Child DC) then validates it and responds with a TGT - AS-REP
+3. Then when the machine requests for a TGS i.e, SPN of a different domain (Domain B/Parent Domain)&#x20;
+4. **Since the DC (Child DC) can't issue it directly, it'll respond with something called as Inter-realm TGT encrypted with a trust key i.e, since the DC (Child DC) doesn't have direct access to service (SPN) that is requested by the machine and if the SPN is in it's realm (trust zone) then it'll issue the Inter-realm TGT encrypted with a Trust Key**
+5. <mark style="color:red;">Then machine sends this Inter-realm TGT to the other domain (Domain B/Parent DC)</mark>
+   1. <mark style="color:red;">Here the DC only checks if it can decrypt the Inter-realm TGT with the Trust key it has, so if an attacker can craft an inter-realm TGT with the trust key, they can request TGS for any service on the forest.</mark>
+6. Then machine then receives the requested TGS
+
+***
+
+## [Active Directory Certificate Services (AD CS)](concepts.md#active-directory-certificate-services-a-d-cs)
+
+* Active Directory Certificate Services (AD CS) enables use of Public Key Infrastructure (PKI) in active directory forest.
+* AD CS helps in authenticating users and machines, encrypting and signing documents, filesystem, emails and more.
+* "AD CS is the Server Role that allows you to build a public key infrastructure (PKI) and provide public key cryptography, digital certificates, and digital signature capabilities for your organization."
+
+### Components
+
+* CA - The certification authority that issues certificates. The server with AD CS role (DC or separate) is the CA.
+* Certificate - Issued to a user or machine and can be used for authentication, encryption, signing etc.
+* CSR - Certificate Signing Request made by a client to the CA to request a certificate.
+* Certificate Template - Defines settings for a certificate. Contains information like - enrolment permissions, EKUs, expiry etc.
+* EKU OlDs - Extended Key Usages Object Identifiers. These dictate the use of a certificate template (Client authentication, Smart Card Logon, SubCA etc.)
+
+### Flow
+
+<figure><img src="../../.gitbook/assets/image (1).png" alt=""><figcaption></figcaption></figure>
+
+Check out "Certified Pre-Owned" paper from SpectorOps for more attack vectors on Abusing AD CS
+
+
+
