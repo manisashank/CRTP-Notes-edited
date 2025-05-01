@@ -35,7 +35,9 @@ Rubeus.exe kerberoast /stats
 
 With enough rights (GenericAll/GenericWrite), a target user's SPN can be set to anything (unique in the domain)
 
-We can then request a TGS without special privileges. The TGS can then be "Kerberosated" instead of we resetting the password of the user with the GenericAll/GenericWrite rights.
+{% hint style="warning" %}
+**We can then request a TGS without special privileges. The TGS can then be "Kerberosated" instead of we resetting the password of the user with the GenericAll/GenericWrite rights.**
+{% endhint %}
 
 {% tabs %}
 {% tab title="PowerView" %}
